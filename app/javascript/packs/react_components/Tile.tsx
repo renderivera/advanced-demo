@@ -13,8 +13,10 @@ export default class Tile extends React.Component<ITileProps,ITileState>
 
     render()
     {
+        let key = this.props.positionX +','+ this.props.positionY;
+
         return(
-            <h1>Hello</h1>
+            <button key={key}>{key}</button>
         );
     }
 }

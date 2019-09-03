@@ -26,22 +26,19 @@ var TileGrid = /** @class */ (function (_super) {
     TileGrid.prototype.render = function () {
         if (this.state == null || this.state.tiles == null)
             return ('');
-        var items = [];
+        var tiles = [];
         for (var x = 0; x < this.props.tileCountX; x++) {
             for (var y = 0; y < this.props.tileCountY; y++) {
-                items.push(new Tile_1.default({ positionX: x, positionY: y }));
+                tiles.push(new Tile_1.default({ positionX: x, positionY: y }));
             }
         }
-        var styles = {
-            grid: {
-                display: 'grid',
-                'grid-template-columns': 'auto auto auto auto auto auto auto auto auto auto',
-                'justify-content': 'space-evenly'
-            }
+        var style = {
+            display: 'grid',
+            gridTemplateColumns: 'auto auto auto auto auto auto auto auto auto auto',
+            width: '100%',
+            height: '100%'
         };
-        return (React.createElement("div", { style: styles.grid }, items.map(function (tile) {
-            return React.createElement("div", { key: tile.props.positionX + ',' + tile.props.positionY }, tile.props.positionX + ',' + tile.props.positionY);
-        })));
+        return (React.createElement("div", { style: style }, tiles.map(function (tile) { return tile.render(); })));
     };
     return TileGrid;
 }(React.Component));

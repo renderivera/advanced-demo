@@ -24,28 +24,24 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         if(this.state == null || this.state.tiles == null)
             return('');           
 
-        const items: Array<Tile> = [];
+        const tiles: Array<Tile> = [];
 
         for (let x = 0; x < this.props.tileCountX; x++) {
             for (let y = 0; y < this.props.tileCountY; y++) {
-                items.push(new Tile({positionX: x, positionY: y}));
+                tiles.push(new Tile({positionX: x, positionY: y}));
             }            
         }      
 
-        const styles = {
-            grid: {
-                display: 'grid',
-                'grid-template-columns': 'auto auto auto auto auto auto auto auto auto auto',
-                'justify-content': 'space-evenly'
-            }
+        const style = {
+            display: 'grid',
+            gridTemplateColumns: 'auto auto auto auto auto auto auto auto auto auto',
+            width: '100%',
+            height: '100%'
         };
                
         return(
-            <div style={styles.grid}>
-                {items.map(tile => 
-                    <div key={tile.props.positionX +','+ tile.props.positionY}>
-                        {tile.props.positionX +','+ tile.props.positionY}
-                    </div>)}
+            <div style={style}>
+                {tiles.map(tile => tile.render())}
             </div>
         );
     }

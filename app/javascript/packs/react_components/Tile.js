@@ -20,7 +20,8 @@ var Tile = /** @class */ (function (_super) {
         return _super.call(this, props) || this;
     }
     Tile.prototype.render = function () {
-        return (React.createElement("h1", null, "Hello"));
+        var key = this.props.positionX + ',' + this.props.positionY;
+        return (React.createElement("button", { key: key }, key));
     };
     return Tile;
 }(React.Component));
