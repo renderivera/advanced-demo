@@ -29,14 +29,18 @@ var TileGrid = /** @class */ (function (_super) {
     TileGrid.prototype.render = function () {
         console.log(this);
         var tiles = [];
-        for (var x = 0; x < this.props.tileCountX; x++) {
-            for (var y = 0; y < this.props.tileCountY; y++) {
-                tiles.push(({ positionX: x, positionY: y, }));
+        var colTemplate = '';
+        for (var y = 0; y < this.props.tileCountY; y++) {
+            for (var x = 0; x < this.props.tileCountX; x++) {
+                tiles.push(({ positionX: x, positionY: y }));
             }
+        }
+        for (var index = 0; index < this.props.tileCountX; index++) {
+            colTemplate += 'auto ';
         }
         var style = {
             display: 'grid',
-            gridTemplateColumns: 'auto auto auto auto auto auto auto auto auto auto',
+            gridTemplateColumns: colTemplate,
             width: '100%',
             height: '100%'
         };

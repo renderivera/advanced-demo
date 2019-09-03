@@ -33,16 +33,23 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
 
         const tiles: Array<ITileProps> = [];
 
+        let colTemplate = '';
 
-        for (let x = 0; x < this.props.tileCountX; x++) {
-            for (let y = 0; y < this.props.tileCountY; y++) {
-                tiles.push(({positionX: x, positionY: y,}));
+        for (let y = 0; y < this.props.tileCountY; y++)
+        {            
+            for (let x = 0; x < this.props.tileCountX; x++)
+            {
+                tiles.push(({positionX: x, positionY: y}));
             }            
         }      
 
+        for (let index = 0; index < this.props.tileCountX; index++) {
+            colTemplate += 'auto ';
+        }
+
         const style = {
             display: 'grid',
-            gridTemplateColumns: 'auto auto auto auto auto auto auto auto auto auto',
+            gridTemplateColumns: colTemplate,
             width: '100%',
             height: '100%'
         };
