@@ -16,16 +16,7 @@ export default class Tile extends React.Component<ITileProps,ITileState>
         active: false
     }
 
-    public getKey(): string
-    {
-        if(this.key == null)
-            this.key=this.props.positionX +','+ this.props.positionY;
-
-        return this.key;
-    }
-    private key:string = null;
-    
-    async clickHandler(event:React.PointerEvent<HTMLButtonElement>)
+    private clickHandler(event:React.PointerEvent<HTMLButtonElement>)
     {
         this.setState({active: !this.state.active});
     }
@@ -49,12 +40,12 @@ export default class Tile extends React.Component<ITileProps,ITileState>
             color = 'white';
         }
         
-        const style ={
+        const style = {
             backgroundColor: color
         }
 
         return(
-            <button style={style} onPointerDown={this.clickHandler}>{this.getKey()}</button>
+            <button style={style} onPointerDown={this.clickHandler}>{this.props.positionX +','+ this.props.positionY}</button>
         );
     }
 }

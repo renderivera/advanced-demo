@@ -31,7 +31,7 @@ var TileGrid = /** @class */ (function (_super) {
         var tiles = [];
         for (var x = 0; x < this.props.tileCountX; x++) {
             for (var y = 0; y < this.props.tileCountY; y++) {
-                tiles.push(new Tile_1.default({ positionX: x, positionY: y }));
+                tiles.push(({ positionX: x, positionY: y, }));
             }
         }
         var style = {
@@ -41,7 +41,7 @@ var TileGrid = /** @class */ (function (_super) {
             height: '100%'
         };
         return (React.createElement("div", { style: style }, tiles.map(function (tile) {
-            return React.createElement(Tile_1.default, { key: tile.getKey(), positionX: tile.props.positionX, positionY: tile.props.positionY });
+            return React.createElement(Tile_1.default, { key: tile.positionX + ',' + tile.positionY, positionX: tile.positionX, positionY: tile.positionY });
         })));
     };
     return TileGrid;

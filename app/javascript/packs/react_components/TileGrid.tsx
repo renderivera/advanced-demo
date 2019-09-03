@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Tile from './Tile';
+import ITileProps from './ITileProps';
 
 interface IGridProps{
     tileCountX:number;
@@ -30,11 +31,12 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
 
         console.log(this);
 
-        const tiles: Array<Tile> = [];
+        const tiles: Array<ITileProps> = [];
+
 
         for (let x = 0; x < this.props.tileCountX; x++) {
             for (let y = 0; y < this.props.tileCountY; y++) {
-                tiles.push(new Tile({positionX: x, positionY: y}));
+                tiles.push(({positionX: x, positionY: y,}));
             }            
         }      
 
@@ -48,7 +50,8 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         return(
             <div style={style}>
                 {tiles.map(tile => 
-                    <Tile key={tile.getKey()} positionX={tile.props.positionX} positionY={tile.props.positionY} />
+                    <Tile key={tile.positionX+','+tile.positionY} 
+                        positionX={tile.positionX} positionY={tile.positionY} />
                     )}
             </div>
         );
