@@ -9,17 +9,34 @@ export default class Tile extends React.Component<ITileProps,ITileState>
 {
     constructor(props:ITileProps){
         super(props);
-        this.clickHandler = this.clickHandler.bind(this);
+        this.clickDownHandler = this.clickDownHandler.bind(this);
+        this.pointerEnterHandler = this.pointerEnterHandler.bind(this);
     }
 
     public readonly state: ITileState = {
         active: false
     }
 
-    private clickHandler(event:React.PointerEvent<HTMLButtonElement>)
+    private static isDragging = false;
+
+    private clickDownHandler(event:React.PointerEvent<HTMLButtonElement>)
     {
+        Tile.isDragging = true;
         this.setState({active: !this.state.active});
     }
+
+    private clickUpHandler(event:React.PointerEvent<HTMLButtonElement>)
+    {
+        Tile.isDragging = false;
+    }
+
+    private pointerEnterHandler(event:React.PointerEvent<HTMLButtonElement>)
+    {
+        if(Tile.isDragging){
+            this.clickDownHandler(event);
+        }
+    }
+
 
     componentDidMount()
     {
@@ -45,7 +62,13 @@ export default class Tile extends React.Component<ITileProps,ITileState>
         }
 
         return(
-            <button style={style} onPointerDown={this.clickHandler}>{this.props.positionX +','+ this.props.positionY}</button>
+            <button style={style} 
+            onPointerDown={this.clickDownHandler} 
+            onPointerUp={this.clickUpHandler}
+            onPointerCancel={this.clickUpHandler}
+            onPointerEnter={this.pointerEnterHandler}>
+                {this.props.positionX +','+ this.props.positionY}
+            </button>
         );
     }
 }
