@@ -26,6 +26,11 @@ var TileGrid = /** @class */ (function (_super) {
     }
     TileGrid.prototype.componentDidMount = function () {
     };
+    // handle when the user draws and goes outside the grid
+    TileGrid.prototype.pointerLeaveHandler = function (event) {
+        if (Tile_1.default.isDragging)
+            Tile_1.default.isDragging = false;
+    };
     TileGrid.prototype.render = function () {
         console.log(this);
         var tiles = [];
@@ -44,7 +49,7 @@ var TileGrid = /** @class */ (function (_super) {
             width: '100%',
             height: '100%'
         };
-        return (React.createElement("div", { style: style }, tiles.map(function (tile) {
+        return (React.createElement("div", { style: style, onPointerLeave: this.pointerLeaveHandler }, tiles.map(function (tile) {
             return React.createElement(Tile_1.default, { key: tile.positionX + ',' + tile.positionY, positionX: tile.positionX, positionY: tile.positionY });
         })));
     };

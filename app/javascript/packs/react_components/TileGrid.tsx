@@ -26,6 +26,14 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         
     }
 
+    // handle when the user draws and goes outside the grid
+    private pointerLeaveHandler(event:React.PointerEvent<HTMLDivElement>)
+    {
+        if(Tile.isDragging)
+            Tile.isDragging = false;
+    }
+
+
 
     render() {
 
@@ -55,7 +63,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         };
                
         return(
-            <div style={style}>
+            <div style={style} onPointerLeave={this.pointerLeaveHandler}>
                 {tiles.map(tile => 
                     <Tile key={tile.positionX+','+tile.positionY} 
                         positionX={tile.positionX} positionY={tile.positionY} />

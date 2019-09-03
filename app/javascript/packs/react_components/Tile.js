@@ -40,7 +40,6 @@ var Tile = /** @class */ (function (_super) {
     Tile.prototype.componentDidMount = function () {
     };
     Tile.prototype.render = function () {
-        console.log(this);
         var color = '';
         if (this.state.active) {
             color = 'gray';

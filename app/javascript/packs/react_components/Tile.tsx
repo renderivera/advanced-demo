@@ -17,7 +17,7 @@ export default class Tile extends React.Component<ITileProps,ITileState>
         active: false
     }
 
-    private static isDragging = false;
+    public static isDragging = false;
 
     private clickDownHandler(event:React.PointerEvent<HTMLButtonElement>)
     {
@@ -37,7 +37,6 @@ export default class Tile extends React.Component<ITileProps,ITileState>
         }
     }
 
-
     componentDidMount()
     {
         
@@ -46,8 +45,6 @@ export default class Tile extends React.Component<ITileProps,ITileState>
 
     render()
     {       
-        console.log(this);
-
         let color = '';
 
         if(this.state.active){
