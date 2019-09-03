@@ -12,17 +12,23 @@ interface IGridState{
 
 export default class TileGrid extends React.Component<IGridProps,IGridState>{
 
+    constructor(props:IGridProps){
+        super(props);
+    }
+
+    public readonly state: IGridState = {
+        tiles: []
+    }
 
 
     componentDidMount(){
-        this.setState({tiles: []}); // needed for instatiation
+        
     }
 
 
     render() {
 
-        if(this.state == null || this.state.tiles == null)
-            return('');           
+        console.log(this);
 
         const tiles: Array<Tile> = [];
 
@@ -41,7 +47,9 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
                
         return(
             <div style={style}>
-                {tiles.map(tile => tile.render())}
+                {tiles.map(tile => 
+                    <Tile key={tile.getKey()} positionX={tile.props.positionX} positionY={tile.props.positionY} />
+                    )}
             </div>
         );
     }

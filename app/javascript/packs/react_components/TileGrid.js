@@ -17,15 +17,17 @@ var React = require("react");
 var Tile_1 = require("./Tile");
 var TileGrid = /** @class */ (function (_super) {
     __extends(TileGrid, _super);
-    function TileGrid() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function TileGrid(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = {
+            tiles: []
+        };
+        return _this;
     }
     TileGrid.prototype.componentDidMount = function () {
-        this.setState({ tiles: [] }); // needed for instatiation
     };
     TileGrid.prototype.render = function () {
-        if (this.state == null || this.state.tiles == null)
-            return ('');
+        console.log(this);
         var tiles = [];
         for (var x = 0; x < this.props.tileCountX; x++) {
             for (var y = 0; y < this.props.tileCountY; y++) {
@@ -38,7 +40,9 @@ var TileGrid = /** @class */ (function (_super) {
             width: '100%',
             height: '100%'
         };
-        return (React.createElement("div", { style: style }, tiles.map(function (tile) { return tile.render(); })));
+        return (React.createElement("div", { style: style }, tiles.map(function (tile) {
+            return React.createElement(Tile_1.default, { key: tile.getKey(), positionX: tile.props.positionX, positionY: tile.props.positionY });
+        })));
     };
     return TileGrid;
 }(React.Component));

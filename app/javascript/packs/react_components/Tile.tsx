@@ -9,14 +9,52 @@ export default class Tile extends React.Component<ITileProps,ITileState>
 {
     constructor(props:ITileProps){
         super(props);
+        this.clickHandler = this.clickHandler.bind(this);
     }
 
-    render()
+    public readonly state: ITileState = {
+        active: false
+    }
+
+    public getKey(): string
     {
-        let key = this.props.positionX +','+ this.props.positionY;
+        if(this.key == null)
+            this.key=this.props.positionX +','+ this.props.positionY;
+
+        return this.key;
+    }
+    private key:string = null;
+    
+    async clickHandler(event:React.PointerEvent<HTMLButtonElement>)
+    {
+        this.setState({active: !this.state.active});
+    }
+
+    componentDidMount()
+    {
+        
+    }
+
+
+    render()
+    {       
+        console.log(this);
+
+        let color = '';
+
+        if(this.state.active){
+            color = 'gray';
+        }
+        else{
+            color = 'white';
+        }
+        
+        const style ={
+            backgroundColor: color
+        }
 
         return(
-            <button key={key}>{key}</button>
+            <button style={style} onPointerDown={this.clickHandler}>{this.getKey()}</button>
         );
     }
 }
