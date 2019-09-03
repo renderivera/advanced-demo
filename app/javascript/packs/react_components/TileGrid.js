@@ -22,8 +22,30 @@ var TileGrid = /** @class */ (function (_super) {
         _this.state = {
             tiles: []
         };
+        _this.style = {
+            display: 'grid',
+            gridTemplateColumns: '',
+            width: '100%',
+            height: '100%'
+        };
+        _this.initTiles();
+        _this.setStyle();
         return _this;
     }
+    TileGrid.prototype.initTiles = function () {
+        for (var y = 0; y < this.props.tileCountY; y++) {
+            for (var x = 0; x < this.props.tileCountX; x++) {
+                this.state.tiles.push(({ positionX: x, positionY: y }));
+            }
+        }
+    };
+    TileGrid.prototype.setStyle = function () {
+        var colTemplate = '';
+        for (var index = 0; index < this.props.tileCountX; index++) {
+            colTemplate += 'auto ';
+        }
+        this.style.gridTemplateColumns = colTemplate;
+    };
     TileGrid.prototype.componentDidMount = function () {
     };
     // handle when the user draws and goes outside the grid
@@ -32,24 +54,7 @@ var TileGrid = /** @class */ (function (_super) {
             Tile_1.default.isDragging = false;
     };
     TileGrid.prototype.render = function () {
-        console.log(this);
-        var tiles = [];
-        var colTemplate = '';
-        for (var y = 0; y < this.props.tileCountY; y++) {
-            for (var x = 0; x < this.props.tileCountX; x++) {
-                tiles.push(({ positionX: x, positionY: y }));
-            }
-        }
-        for (var index = 0; index < this.props.tileCountX; index++) {
-            colTemplate += 'auto ';
-        }
-        var style = {
-            display: 'grid',
-            gridTemplateColumns: colTemplate,
-            width: '100%',
-            height: '100%'
-        };
-        return (React.createElement("div", { style: style, onPointerLeave: this.pointerLeaveHandler }, tiles.map(function (tile) {
+        return (React.createElement("div", { style: this.style, onPointerLeave: this.pointerLeaveHandler }, this.state.tiles.map(function (tile) {
             return React.createElement(Tile_1.default, { key: tile.positionX + ',' + tile.positionY, positionX: tile.positionX, positionY: tile.positionY });
         })));
     };
