@@ -4,4 +4,4 @@ import * as ReactDOM from "react-dom";
 import TileGrid from './react_components/TileGrid';
 
 
-ReactDOM.render(<TileGrid tileCountX={20} tileCountY={10} findClusterAPIpath="api/v1/get_largest_tile_cluster" />,  document.getElementById("TileGrid"));
+ReactDOM.render(<TileGrid tileCountX={10} tileCountY={20} findClusterAPIpath="api/v1/largest" />,  document.getElementById("TileGrid"));

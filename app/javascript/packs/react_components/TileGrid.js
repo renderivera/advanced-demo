@@ -64,6 +64,7 @@ var TileGrid = /** @class */ (function (_super) {
             width: '100%',
             height: '100%'
         };
+        _this.submitTiles = _this.submitTiles.bind(_this);
         _this.initTiles();
         _this.setStyle();
         return _this;
@@ -91,28 +92,35 @@ var TileGrid = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var json;
             return __generator(this, function (_a) {
-                json = "";
-                fetch(this.props.findClusterAPIpath, {
-                    method: 'post',
-                    body: json,
-                    headers: { 'Content-type': 'application/json' }
-                })
-                    .then(this.successCallback, this.failureCallback);
+                json = JSON.stringify(this.state);
+                console.log(json);
+                try {
+                    fetch(this.props.findClusterAPIpath, {
+                        method: 'post',
+                        body: json,
+                        headers: { 'Content-type': 'application/json' }
+                    })
+                        .then(this.successCallback);
+                }
+                catch (error) {
+                    console.log(error);
+                }
                 return [2 /*return*/];
             });
         });
     };
     TileGrid.prototype.successCallback = function (val) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
-            });
-        });
-    };
-    TileGrid.prototype.failureCallback = function (val) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _b = (_a = console).log;
+                        return [4 /*yield*/, val.json()];
+                    case 1:
+                        _b.apply(_a, [_c.sent()]);
+                        return [2 /*return*/];
+                }
             });
         });
     };

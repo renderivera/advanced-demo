@@ -17,7 +17,9 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     constructor(props:IGridProps){
         super(props);
 
-        this.initTiles();      
+        this.submitTiles = this.submitTiles.bind(this);
+
+        this.initTiles();
         this.setStyle();
     }
 
@@ -34,7 +36,6 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
             }            
         }
     }
-
 
     private setStyle() {
         let colTemplate = '';
@@ -60,22 +61,23 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
     private async submitTiles(){
+        let json = JSON.stringify(this.state);
 
-        let json = "";
+        console.log(json);
 
-
-        fetch(this.props.findClusterAPIpath,{
-            method: 'post',
-            body: json,
-            headers: { 'Content-type': 'application/json' }})
-        .then(this.successCallback,this.failureCallback)
+        try {
+            fetch(this.props.findClusterAPIpath,{
+                method: 'post',
+                body: json,
+                headers: { 'Content-type': 'application/json' }})
+            .then(this.successCallback)
+        } catch (error) {
+            console.log(error);    
+        }
     }
 
     private async successCallback(val: Response){
-
-    }
-    private async failureCallback(val: Response){
-        
+        console.log(await val.json());
     }
 
 
