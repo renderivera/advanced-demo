@@ -1,14 +1,15 @@
 import * as React from 'react';
 import Tile from './Tile';
-import ITileProps from './ITileProps';
+import {ITile} from './ITileProps';
 
 interface IGridProps{
     tileCountX:number;
     tileCountY:number;
+    findClusterAPIpath:string;
 }
 
 interface IGridState{
-    tiles:Array<ITileProps>;
+    tiles:Array<ITile>;
 }
 
 export default class TileGrid extends React.Component<IGridProps,IGridState>{
@@ -58,6 +59,26 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
             Tile.isDragging = false;
     }
 
+    private async submitTiles(){
+
+        let json = "";
+
+
+        fetch(this.props.findClusterAPIpath,{
+            method: 'post',
+            body: json,
+            headers: { 'Content-type': 'application/json' }})
+        .then(this.successCallback,this.failureCallback)
+    }
+
+    private async successCallback(val: Response){
+
+    }
+    private async failureCallback(val: Response){
+        
+    }
+
+
     render() {
                
         return(
@@ -66,6 +87,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
                     <Tile key={tile.positionX+','+tile.positionY} 
                         positionX={tile.positionX} positionY={tile.positionY} />
                     )}
+                    <button onClick={this.submitTiles}></button>
             </div>
         );
     }

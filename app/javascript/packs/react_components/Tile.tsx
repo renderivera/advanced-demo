@@ -1,5 +1,5 @@
 import * as React from 'react';
-import  ITileProps from './ITileProps';
+import {ITileProps} from './ITileProps';
 
 interface ITileState{
     active: boolean;
