@@ -1,58 +1,38 @@
 import * as React from 'react';
-import {ITileProps} from './ITileProps';
+import {ITileProps, ITile} from './ITileProps';
 
-interface ITileState{
-    active: boolean;
-}
-
-export default class Tile extends React.Component<ITileProps,ITileState>
-{
+export default class Tile extends React.Component<ITileProps> {
     constructor(props:ITileProps){
         super(props);
         this.clickDownHandler = this.clickDownHandler.bind(this);
+        this.clickUpHandler = this.clickUpHandler.bind(this);
         this.pointerEnterHandler = this.pointerEnterHandler.bind(this);
+
+        this.data = props.containerState.tilesTmpModel.get(props.id);
     }
 
-    public readonly state: ITileState = {
-        active: false
+    private readonly data: ITile;
+
+    private clickDownHandler(event:React.PointerEvent<HTMLButtonElement>) {
+        //this.props.containerState.isDragging = true;
+        //this.setState({active: !this.state.active});
+        this.props.pointerDownHandler(this.props.id)
     }
 
-    public static isDragging = false;
-
-    private clickDownHandler(event:React.PointerEvent<HTMLButtonElement>)
-    {
-        Tile.isDragging = true;
-        this.setState({active: !this.state.active});
+    private clickUpHandler(event:React.PointerEvent<HTMLButtonElement>) {
+        //Tile.isDragging = false;
+        this.props.pointerCancelHandler(this.props.id)
     }
 
-    private clickUpHandler(event:React.PointerEvent<HTMLButtonElement>)
-    {
-        Tile.isDragging = false;
+    private pointerEnterHandler(event:React.PointerEvent<HTMLButtonElement>) {
+        //if(Tile.isDragging){
+        //    this.clickDownHandler(event);
+        //}
+        this.props.pointerEnterHandler(this.props.id)
     }
 
-    private pointerEnterHandler(event:React.PointerEvent<HTMLButtonElement>)
-    {
-        if(Tile.isDragging){
-            this.clickDownHandler(event);
-        }
-    }
-
-    componentDidMount()
-    {
-        
-    }
-
-
-    render()
-    {       
-        let color = '';
-
-        if(this.state.active){
-            color = 'gray';
-        }
-        else{
-            color = 'white';
-        }
+    render() {       
+        const color = this.data.active ? 'gray' : 'white';
         
         const style = {
             backgroundColor: color
@@ -64,7 +44,7 @@ export default class Tile extends React.Component<ITileProps,ITileState>
             onPointerUp={this.clickUpHandler}
             onPointerCancel={this.clickUpHandler}
             onPointerEnter={this.pointerEnterHandler}>
-                {this.props.positionX +','+ this.props.positionY}
+                {this.props.children}
             </button>
         );
     }

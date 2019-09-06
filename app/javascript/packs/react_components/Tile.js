@@ -18,41 +18,34 @@ var Tile = /** @class */ (function (_super) {
     __extends(Tile, _super);
     function Tile(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = {
-            active: false
-        };
         _this.clickDownHandler = _this.clickDownHandler.bind(_this);
+        _this.clickUpHandler = _this.clickUpHandler.bind(_this);
         _this.pointerEnterHandler = _this.pointerEnterHandler.bind(_this);
+        _this.data = props.containerState.tilesTmpModel.get(props.id);
         return _this;
     }
     Tile.prototype.clickDownHandler = function (event) {
-        Tile.isDragging = true;
-        this.setState({ active: !this.state.active });
+        //this.props.containerState.isDragging = true;
+        //this.setState({active: !this.state.active});
+        this.props.pointerDownHandler(this.props.id);
     };
     Tile.prototype.clickUpHandler = function (event) {
-        Tile.isDragging = false;
+        //Tile.isDragging = false;
+        this.props.pointerCancelHandler(this.props.id);
     };
     Tile.prototype.pointerEnterHandler = function (event) {
-        if (Tile.isDragging) {
-            this.clickDownHandler(event);
-        }
-    };
-    Tile.prototype.componentDidMount = function () {
+        //if(Tile.isDragging){
+        //    this.clickDownHandler(event);
+        //}
+        this.props.pointerEnterHandler(this.props.id);
     };
     Tile.prototype.render = function () {
-        var color = '';
-        if (this.state.active) {
-            color = 'gray';
-        }
-        else {
-            color = 'white';
-        }
+        var color = this.data.active ? 'gray' : 'white';
         var style = {
             backgroundColor: color
         };
-        return (React.createElement("button", { style: style, onPointerDown: this.clickDownHandler, onPointerUp: this.clickUpHandler, onPointerCancel: this.clickUpHandler, onPointerEnter: this.pointerEnterHandler }, this.props.positionX + ',' + this.props.positionY));
+        return (React.createElement("button", { style: style, onPointerDown: this.clickDownHandler, onPointerUp: this.clickUpHandler, onPointerCancel: this.clickUpHandler, onPointerEnter: this.pointerEnterHandler }, this.props.children));
     };
-    Tile.isDragging = false;
     return Tile;
 }(React.Component));
 exports.default = Tile;

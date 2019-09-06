@@ -48,6 +48,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var Tile_1 = require("./Tile");
@@ -56,7 +67,8 @@ var TileGrid = /** @class */ (function (_super) {
     function TileGrid(props) {
         var _this = _super.call(this, props) || this;
         _this.state = {
-            tiles: []
+            tilesTmpModel: new Map(),
+            isDragging: false
         };
         _this.style = {
             display: 'grid',
@@ -65,6 +77,10 @@ var TileGrid = /** @class */ (function (_super) {
             height: '100%'
         };
         _this.submitTiles = _this.submitTiles.bind(_this);
+        _this.gridPointerLeaveHandler = _this.gridPointerLeaveHandler.bind(_this);
+        _this.pointerDownHandler = _this.pointerDownHandler.bind(_this);
+        _this.pointerCancelHandler = _this.pointerCancelHandler.bind(_this);
+        _this.pointerEnterHandler = _this.pointerEnterHandler.bind(_this);
         _this.initTiles();
         _this.setStyle();
         return _this;
@@ -72,7 +88,7 @@ var TileGrid = /** @class */ (function (_super) {
     TileGrid.prototype.initTiles = function () {
         for (var y = 0; y < this.props.tileCountY; y++) {
             for (var x = 0; x < this.props.tileCountX; x++) {
-                this.state.tiles.push(({ positionX: x, positionY: y }));
+                this.state.tilesTmpModel.set(x + "," + y, { x: x, y: y, active: false });
             }
         }
     };
@@ -82,11 +98,6 @@ var TileGrid = /** @class */ (function (_super) {
             colTemplate += 'auto ';
         }
         this.style.gridTemplateColumns = colTemplate;
-    };
-    // handle when the user draws and goes outside the grid
-    TileGrid.prototype.pointerLeaveHandler = function (event) {
-        if (Tile_1.default.isDragging)
-            Tile_1.default.isDragging = false;
     };
     TileGrid.prototype.submitTiles = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -124,14 +135,57 @@ var TileGrid = /** @class */ (function (_super) {
             });
         });
     };
+    // handle when the user draws and goes outside the grid
+    TileGrid.prototype.gridPointerLeaveHandler = function (event) {
+        this.pointerCancelHandler();
+    };
+    TileGrid.prototype.pointerDownHandler = function (tileID) {
+        this.setState({ isDragging: true });
+        console.log(tileID);
+        var t = this.state.tilesTmpModel.get(tileID);
+        t.active = !t.active;
+        //this.setState({active: !this.state.active});
+    };
+    TileGrid.prototype.pointerCancelHandler = function (tileID) {
+        this.setState({ isDragging: false });
+    };
+    TileGrid.prototype.pointerEnterHandler = function (tileID) {
+        if (this.state.isDragging) {
+            this.pointerDownHandler(tileID);
+        }
+    };
     TileGrid.prototype.render = function () {
-        return (React.createElement("div", { style: this.style, onPointerLeave: this.pointerLeaveHandler },
-            this.state.tiles.map(function (tile) {
-                return React.createElement(Tile_1.default, { key: tile.positionX + ',' + tile.positionY, positionX: tile.positionX, positionY: tile.positionY });
-            }),
+        var e_1, _a;
+        var tiles = [];
+        try {
+            for (var _b = __values(this.state.tilesTmpModel.keys()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var key = _c.value;
+                tiles.push(React.createElement(Tile_1.default, { key: key, id: key, containerState: this.state, pointerDownHandler: this.pointerDownHandler, pointerCancelHandler: this.pointerCancelHandler, pointerEnterHandler: this.pointerEnterHandler },
+                    React.createElement("p", null, key)));
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return (React.createElement("div", { style: this.style, onPointerLeave: this.gridPointerLeaveHandler },
+            tiles,
             React.createElement("button", { onClick: this.submitTiles })));
     };
     return TileGrid;
 }(React.Component));
 exports.default = TileGrid;
+/*
+{this.state.tilesTmpModel.forEach((value: ITile, key:string, map:any) =>  {
+                    <Tile key={key} id={key}
+                        pointerDownHandler={this.pointerDownHandler}
+                        pointerCancelHandler={this.pointerCancelHandler}
+                        pointerEnterHandler={this.pointerEnterHandler}>
+                        <p>{key}</p>
+                    </Tile>
+                    })}
+*/ 
 //# sourceMappingURL=TileGrid.js.map

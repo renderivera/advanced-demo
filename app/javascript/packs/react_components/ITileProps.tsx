@@ -1,14 +1,24 @@
-export interface ITileProps {
-    positionX: number;
-    positionY: number;
+export interface ITile {
+    x: number;
+    y: number;
+    active: boolean;
+    cluster?: ICluster;
 }
 
-export interface ITile extends ITileProps{
-    active?: boolean;
-    cluster?: ICluster;
+export interface ITileProps {
+    id: string;
+    containerState: IGridState;
+    pointerDownHandler(id:string):void;
+    pointerEnterHandler(id:string):void;
+    pointerCancelHandler(id:string):void;
 }
 
 export interface ICluster {
     id: string;
     tiles: Array<ITile>;
+}
+
+export interface IGridState {
+    tilesTmpModel: Map<string, ITile>;
+    isDragging: boolean;
 }

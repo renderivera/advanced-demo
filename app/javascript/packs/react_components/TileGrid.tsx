@@ -1,15 +1,12 @@
 import * as React from 'react';
 import Tile from './Tile';
-import {ITile} from './ITileProps';
+import {ITile, IGridState} from './ITileProps';
+
 
 interface IGridProps{
     tileCountX:number;
     tileCountY:number;
     findClusterAPIpath:string;
-}
-
-interface IGridState{
-    tiles:Array<ITile>;
 }
 
 export default class TileGrid extends React.Component<IGridProps,IGridState>{
@@ -18,21 +15,24 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         super(props);
 
         this.submitTiles = this.submitTiles.bind(this);
+        this.gridPointerLeaveHandler = this.gridPointerLeaveHandler.bind(this);
+        this.pointerDownHandler = this.pointerDownHandler.bind(this);
+        this.pointerCancelHandler = this.pointerCancelHandler.bind(this);
+        this.pointerEnterHandler = this.pointerEnterHandler.bind(this);
 
         this.initTiles();
         this.setStyle();
     }
 
     public readonly state: IGridState = {
-        tiles: []
+        tilesTmpModel:new Map<string, ITile>(),
+        isDragging:false
     }
 
     private initTiles() {
-        for (let y = 0; y < this.props.tileCountY; y++)
-        {            
-            for (let x = 0; x < this.props.tileCountX; x++)
-            {
-                this.state.tiles.push(({positionX: x, positionY: y}));
+        for (let y = 0; y < this.props.tileCountY; y++) {            
+            for (let x = 0; x < this.props.tileCountX; x++) {
+                this.state.tilesTmpModel.set(`${x},${y}`, {x: x, y: y, active:false})
             }            
         }
     }
@@ -52,12 +52,6 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         gridTemplateColumns: '',
         width: '100%',
         height: '100%'
-    }
-
-    // handle when the user draws and goes outside the grid
-    private pointerLeaveHandler(event:React.PointerEvent<HTMLDivElement>) {
-        if(Tile.isDragging)
-            Tile.isDragging = false;
     }
 
     private async submitTiles(){
@@ -81,16 +75,65 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
 
+
+
+
+    // handle when the user draws and goes outside the grid
+    private gridPointerLeaveHandler(event:React.PointerEvent<HTMLDivElement>) {
+        this.pointerCancelHandler();
+    }
+
+    private pointerDownHandler(tileID:string) {
+        
+        this.setState({isDragging: true});
+        console.log(tileID);
+
+        let t = this.state.tilesTmpModel.get(tileID);
+        t.active = !t.active;
+
+
+        //this.setState({active: !this.state.active});
+    }
+
+    private pointerCancelHandler(tileID?:string) {
+        this.setState({isDragging: false});
+    }
+
+    private pointerEnterHandler(tileID:string) {
+        if(this.state.isDragging){
+            this.pointerDownHandler(tileID);
+        }
+    }
+
+
     render() {
-               
+        const tiles = [];
+
+        for (const key of this.state.tilesTmpModel.keys()) {
+            tiles.push(<Tile key={key} id={key} containerState={this.state}
+            pointerDownHandler={this.pointerDownHandler}
+            pointerCancelHandler={this.pointerCancelHandler}
+            pointerEnterHandler={this.pointerEnterHandler}>
+                <p>{key}</p>
+            </Tile>
+           );
+        }
+
         return(
-            <div style={this.style} onPointerLeave={this.pointerLeaveHandler}>
-                {this.state.tiles.map(tile => 
-                    <Tile key={tile.positionX+','+tile.positionY} 
-                        positionX={tile.positionX} positionY={tile.positionY} />
-                    )}
-                    <button onClick={this.submitTiles}></button>
+            <div style={this.style} onPointerLeave={this.gridPointerLeaveHandler}>
+                {tiles}
+                <button onClick={this.submitTiles}></button>
             </div>
         );
     }
 }
+/*
+{this.state.tilesTmpModel.forEach((value: ITile, key:string, map:any) =>  {
+                    <Tile key={key} id={key}
+                        pointerDownHandler={this.pointerDownHandler}
+                        pointerCancelHandler={this.pointerCancelHandler} 
+                        pointerEnterHandler={this.pointerEnterHandler}>
+                        <p>{key}</p>    
+                    </Tile>
+                    })}
+*/
