@@ -47,7 +47,12 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
     private async submitTiles(){
-        this.fetchRequest.body = JSON.stringify([...this.state.tilesTmpModel]); // ... spread contents of Map; necessarry, stringify doesnt work with iterables
+
+        var obb = {xCount:this.props.tileCountX, 
+            yCount:this.props.tileCountY, 
+            tiles:[...this.state.tilesTmpModel]}; // ... spreads contents of Map; necessarry, stringify doesnt work with iterables
+
+        this.fetchRequest.body = JSON.stringify(obb);
         console.log(this.fetchRequest.body);
 
         try {

@@ -115,8 +115,12 @@ var TileGrid = /** @class */ (function (_super) {
     };
     TileGrid.prototype.submitTiles = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var obb;
             return __generator(this, function (_a) {
-                this.fetchRequest.body = JSON.stringify(__spread(this.state.tilesTmpModel)); // ... spread contents of Map; necessarry, stringify doesnt work with iterables
+                obb = { xCount: this.props.tileCountX,
+                    yCount: this.props.tileCountY,
+                    tiles: __spread(this.state.tilesTmpModel) };
+                this.fetchRequest.body = JSON.stringify(obb);
                 console.log(this.fetchRequest.body);
                 try {
                     fetch(this.props.findClusterAPIpath, this.fetchRequest)
