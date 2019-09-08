@@ -48,6 +48,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -66,23 +86,17 @@ var TileGrid = /** @class */ (function (_super) {
     __extends(TileGrid, _super);
     function TileGrid(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = {
-            tilesTmpModel: new Map(),
-            isDragging: false
-        };
-        _this.style = {
-            display: 'grid',
-            gridTemplateColumns: '',
-            width: '100%',
-            height: '100%'
-        };
+        _this.state = { tilesTmpModel: new Map() };
+        _this.style = { display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%' };
+        _this.fetchRequest = { method: 'post', body: null, headers: { 'Content-type': 'application/json' } };
+        _this.isDragging = false;
         _this.submitTiles = _this.submitTiles.bind(_this);
         _this.gridPointerLeaveHandler = _this.gridPointerLeaveHandler.bind(_this);
         _this.pointerDownHandler = _this.pointerDownHandler.bind(_this);
         _this.pointerCancelHandler = _this.pointerCancelHandler.bind(_this);
         _this.pointerEnterHandler = _this.pointerEnterHandler.bind(_this);
         _this.initTiles();
-        _this.setStyle();
+        _this.initStyle();
         return _this;
     }
     TileGrid.prototype.initTiles = function () {
@@ -92,25 +106,20 @@ var TileGrid = /** @class */ (function (_super) {
             }
         }
     };
-    TileGrid.prototype.setStyle = function () {
+    TileGrid.prototype.initStyle = function () {
         var colTemplate = '';
         for (var index = 0; index < this.props.tileCountX; index++) {
-            colTemplate += 'auto ';
+            colTemplate += 'auto '; // add an auto for each x-int / column for dynamic resizing
         }
         this.style.gridTemplateColumns = colTemplate;
     };
     TileGrid.prototype.submitTiles = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var json;
             return __generator(this, function (_a) {
-                json = JSON.stringify(this.state);
-                console.log(json);
+                this.fetchRequest.body = JSON.stringify(__spread(this.state.tilesTmpModel)); // ... spread contents of Map; necessarry, stringify doesnt work with iterables
+                console.log(this.fetchRequest.body);
                 try {
-                    fetch(this.props.findClusterAPIpath, {
-                        method: 'post',
-                        body: json,
-                        headers: { 'Content-type': 'application/json' }
-                    })
+                    fetch(this.props.findClusterAPIpath, this.fetchRequest)
                         .then(this.successCallback);
                 }
                 catch (error) {
@@ -140,22 +149,28 @@ var TileGrid = /** @class */ (function (_super) {
         this.pointerCancelHandler();
     };
     TileGrid.prototype.pointerDownHandler = function (tileID) {
-        this.setState({ isDragging: true });
-        console.log(tileID);
         var t = this.state.tilesTmpModel.get(tileID);
         t.active = !t.active;
-        //this.setState({active: !this.state.active});
+        if (!this.isDragging)
+            this.isDragging = true;
     };
     TileGrid.prototype.pointerCancelHandler = function (tileID) {
-        this.setState({ isDragging: false });
+        if (this.isDragging)
+            this.isDragging = false;
     };
+    /* return true if isDragging */
     TileGrid.prototype.pointerEnterHandler = function (tileID) {
-        if (this.state.isDragging) {
+        if (this.isDragging) {
             this.pointerDownHandler(tileID);
+            return true;
+        }
+        else {
+            return false;
         }
     };
     TileGrid.prototype.render = function () {
         var e_1, _a;
+        console.log("render grid");
         var tiles = [];
         try {
             for (var _b = __values(this.state.tilesTmpModel.keys()), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -178,14 +193,4 @@ var TileGrid = /** @class */ (function (_super) {
     return TileGrid;
 }(React.Component));
 exports.default = TileGrid;
-/*
-{this.state.tilesTmpModel.forEach((value: ITile, key:string, map:any) =>  {
-                    <Tile key={key} id={key}
-                        pointerDownHandler={this.pointerDownHandler}
-                        pointerCancelHandler={this.pointerCancelHandler}
-                        pointerEnterHandler={this.pointerEnterHandler}>
-                        <p>{key}</p>
-                    </Tile>
-                    })}
-*/ 
 //# sourceMappingURL=TileGrid.js.map

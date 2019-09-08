@@ -25,25 +25,19 @@ var Tile = /** @class */ (function (_super) {
         return _this;
     }
     Tile.prototype.clickDownHandler = function (event) {
-        //this.props.containerState.isDragging = true;
-        //this.setState({active: !this.state.active});
         this.props.pointerDownHandler(this.props.id);
+        this.forceUpdate();
     };
     Tile.prototype.clickUpHandler = function (event) {
-        //Tile.isDragging = false;
         this.props.pointerCancelHandler(this.props.id);
     };
     Tile.prototype.pointerEnterHandler = function (event) {
-        //if(Tile.isDragging){
-        //    this.clickDownHandler(event);
-        //}
-        this.props.pointerEnterHandler(this.props.id);
+        if (this.props.pointerEnterHandler(this.props.id))
+            this.forceUpdate();
     };
     Tile.prototype.render = function () {
-        var color = this.data.active ? 'gray' : 'white';
-        var style = {
-            backgroundColor: color
-        };
+        console.log("render tile: " + this.props.id);
+        var style = { backgroundColor: this.data.active ? 'gray' : 'white' };
         return (React.createElement("button", { style: style, onPointerDown: this.clickDownHandler, onPointerUp: this.clickUpHandler, onPointerCancel: this.clickUpHandler, onPointerEnter: this.pointerEnterHandler }, this.props.children));
     };
     return Tile;

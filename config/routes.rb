@@ -3,7 +3,6 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      get 'tiles/(:id)', to: 'tiles#index'
       post '/largest', to: 'tiles#largest'
     end
   end 

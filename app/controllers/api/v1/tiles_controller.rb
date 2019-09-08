@@ -1,9 +1,12 @@
 class Api::V1::TilesController < ApplicationController
-  def index
-    render json: {}
-  end
+  wrap_parameters false
+  logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+  logger.debug "NEW REQUEST"
+
   def largest
-    render json: resp_body
+
+    
+    render json: profile_params
   end
 
   private
@@ -17,6 +20,6 @@ class Api::V1::TilesController < ApplicationController
   end
 
   def profile_params
-    params.require(:tiles[])
+    params.require(:_json).require([])
   end
 end

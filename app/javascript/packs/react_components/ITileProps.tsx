@@ -9,7 +9,7 @@ export interface ITileProps {
     id: string;
     containerState: IGridState;
     pointerDownHandler(id:string):void;
-    pointerEnterHandler(id:string):void;
+    pointerEnterHandler(id:string):boolean;
     pointerCancelHandler(id:string):void;
 }
 
@@ -20,5 +20,4 @@ export interface ICluster {
 
 export interface IGridState {
     tilesTmpModel: Map<string, ITile>;
-    isDragging: boolean;
 }

@@ -21,49 +21,37 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         this.pointerEnterHandler = this.pointerEnterHandler.bind(this);
 
         this.initTiles();
-        this.setStyle();
+        this.initStyle();
     }
 
-    public readonly state: IGridState = {
-        tilesTmpModel:new Map<string, ITile>(),
-        isDragging:false
-    }
+    public readonly state: IGridState = {tilesTmpModel:new Map<string, ITile>()};
+    private readonly style: React.CSSProperties = {display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%'};
+    private fetchRequest: RequestInit = {method: 'post', body: null, headers: { 'Content-type': 'application/json' }};
+
+    
 
     private initTiles() {
         for (let y = 0; y < this.props.tileCountY; y++) {            
             for (let x = 0; x < this.props.tileCountX; x++) {
-                this.state.tilesTmpModel.set(`${x},${y}`, {x: x, y: y, active:false})
+                this.state.tilesTmpModel.set(`${x},${y}`, {x: x, y: y, active: false})
             }            
         }
     }
 
-    private setStyle() {
+    private initStyle() {
         let colTemplate = '';
-
         for (let index = 0; index < this.props.tileCountX; index++) {
-            colTemplate += 'auto ';
+            colTemplate += 'auto '; // add an auto for each x-int / column for dynamic resizing
         }
-
         this.style.gridTemplateColumns = colTemplate;
     }
 
-    private style = {
-        display: 'grid',
-        gridTemplateColumns: '',
-        width: '100%',
-        height: '100%'
-    }
-
     private async submitTiles(){
-        let json = JSON.stringify(this.state);
-
-        console.log(json);
+        this.fetchRequest.body = JSON.stringify([...this.state.tilesTmpModel]); // ... spread contents of Map; necessarry, stringify doesnt work with iterables
+        console.log(this.fetchRequest.body);
 
         try {
-            fetch(this.props.findClusterAPIpath,{
-                method: 'post',
-                body: json,
-                headers: { 'Content-type': 'application/json' }})
+            fetch(this.props.findClusterAPIpath, this.fetchRequest)
             .then(this.successCallback)
         } catch (error) {
             console.log(error);    
@@ -75,8 +63,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
 
-
-
+    private isDragging:boolean = false;
 
     // handle when the user draws and goes outside the grid
     private gridPointerLeaveHandler(event:React.PointerEvent<HTMLDivElement>) {
@@ -84,29 +71,32 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
     private pointerDownHandler(tileID:string) {
-        
-        this.setState({isDragging: true});
-        console.log(tileID);
-
         let t = this.state.tilesTmpModel.get(tileID);
         t.active = !t.active;
 
-
-        //this.setState({active: !this.state.active});
+        if(!this.isDragging)
+            this.isDragging = true;
     }
 
     private pointerCancelHandler(tileID?:string) {
-        this.setState({isDragging: false});
+        if(this.isDragging)
+            this.isDragging = false;
     }
 
-    private pointerEnterHandler(tileID:string) {
-        if(this.state.isDragging){
+    /* return true if isDragging */
+    private pointerEnterHandler(tileID:string):boolean {
+        if(this.isDragging){
             this.pointerDownHandler(tileID);
+            return true;
+        }
+        else{
+            return false;
         }
     }
 
 
     render() {
+        console.log("render grid");
         const tiles = [];
 
         for (const key of this.state.tilesTmpModel.keys()) {
@@ -127,13 +117,3 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         );
     }
 }
-/*
-{this.state.tilesTmpModel.forEach((value: ITile, key:string, map:any) =>  {
-                    <Tile key={key} id={key}
-                        pointerDownHandler={this.pointerDownHandler}
-                        pointerCancelHandler={this.pointerCancelHandler} 
-                        pointerEnterHandler={this.pointerEnterHandler}>
-                        <p>{key}</p>    
-                    </Tile>
-                    })}
-*/

@@ -14,29 +14,23 @@ export default class Tile extends React.Component<ITileProps> {
     private readonly data: ITile;
 
     private clickDownHandler(event:React.PointerEvent<HTMLButtonElement>) {
-        //this.props.containerState.isDragging = true;
-        //this.setState({active: !this.state.active});
-        this.props.pointerDownHandler(this.props.id)
+        this.props.pointerDownHandler(this.props.id);
+        this.forceUpdate();
     }
 
     private clickUpHandler(event:React.PointerEvent<HTMLButtonElement>) {
-        //Tile.isDragging = false;
-        this.props.pointerCancelHandler(this.props.id)
+        this.props.pointerCancelHandler(this.props.id);
     }
 
     private pointerEnterHandler(event:React.PointerEvent<HTMLButtonElement>) {
-        //if(Tile.isDragging){
-        //    this.clickDownHandler(event);
-        //}
-        this.props.pointerEnterHandler(this.props.id)
+        if(this.props.pointerEnterHandler(this.props.id))
+            this.forceUpdate();
     }
 
     render() {       
-        const color = this.data.active ? 'gray' : 'white';
-        
-        const style = {
-            backgroundColor: color
-        }
+        console.log(`render tile: ${this.props.id}`);
+
+        const style = { backgroundColor: this.data.active ? 'gray' : 'white' };
 
         return(
             <button style={style} 
