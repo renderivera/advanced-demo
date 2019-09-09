@@ -19,7 +19,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         this.pointerDownHandler = this.pointerDownHandler.bind(this);
         this.pointerCancelHandler = this.pointerCancelHandler.bind(this);
         this.pointerEnterHandler = this.pointerEnterHandler.bind(this);
-        this.successCallback = this.successCallback.bind(this);
+        this.largestClusterAPIcallback = this.largestClusterAPIcallback.bind(this);
 
         this.initTiles();
         this.initStyle();
@@ -59,26 +59,37 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
 
         try {
             fetch(this.props.findClusterAPIpath, this.fetchRequest)
-            .then(this.successCallback)
+            .then(this.largestClusterAPIcallback)
         } catch (error) {
             console.log(error);
         }
     }
 
-    private async successCallback(val: Response){
+    private currentLargestCluster:string[] = null; // TODO: rerender previously largest  tiles
+
+    private async largestClusterAPIcallback(val: Response){
         let largestCluster = await val.json() as string[];
-        
+
         if(largestCluster == null) // casting error
-            return; //TODO: define with stakeholder whether to throw an error here
+        {return;}     //TODO: define with stakeholder whether to throw an error here    
+        
+        if(this.currentLargestCluster != null){
+            this.currentLargestCluster.map(tileID => {
+                let tile = this.state.tilesTmpModel.get(tileID);
+                tile.cluster = "";
+                this.rerenderTile(tileID);
+            });
+        }
+        this.currentLargestCluster = largestCluster;
         
         largestCluster.map(tileID => {
             let tile = this.state.tilesTmpModel.get(tileID);
             tile.cluster = "largest ";
             this.rerenderTile(tileID);
-        });
-
-        
+        });   
     }
+
+     
 
     private rerenderTile(tileID:string){
         let tc = this.state.tileComponentRefs.get(tileID);

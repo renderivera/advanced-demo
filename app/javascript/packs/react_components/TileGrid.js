@@ -92,13 +92,14 @@ var TileGrid = /** @class */ (function (_super) {
         };
         _this.style = { display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%' };
         _this.fetchRequest = { method: 'post', body: null, headers: { 'Content-type': 'application/json' } };
+        _this.currentLargestCluster = null; // TODO: rerender previously largest  tiles
         _this.isDragging = false;
         _this.submitTiles = _this.submitTiles.bind(_this);
         _this.gridPointerLeaveHandler = _this.gridPointerLeaveHandler.bind(_this);
         _this.pointerDownHandler = _this.pointerDownHandler.bind(_this);
         _this.pointerCancelHandler = _this.pointerCancelHandler.bind(_this);
         _this.pointerEnterHandler = _this.pointerEnterHandler.bind(_this);
-        _this.successCallback = _this.successCallback.bind(_this);
+        _this.largestClusterAPIcallback = _this.largestClusterAPIcallback.bind(_this);
         _this.initTiles();
         _this.initStyle();
         return _this;
@@ -127,7 +128,7 @@ var TileGrid = /** @class */ (function (_super) {
                 this.fetchRequest.body = JSON.stringify(obb);
                 try {
                     fetch(this.props.findClusterAPIpath, this.fetchRequest)
-                        .then(this.successCallback);
+                        .then(this.largestClusterAPIcallback);
                 }
                 catch (error) {
                     console.log(error);
@@ -136,7 +137,7 @@ var TileGrid = /** @class */ (function (_super) {
             });
         });
     };
-    TileGrid.prototype.successCallback = function (val) {
+    TileGrid.prototype.largestClusterAPIcallback = function (val) {
         return __awaiter(this, void 0, void 0, function () {
             var largestCluster;
             var _this = this;
@@ -146,7 +147,17 @@ var TileGrid = /** @class */ (function (_super) {
                     case 1:
                         largestCluster = _a.sent();
                         if (largestCluster == null) // casting error
-                            return [2 /*return*/]; //TODO: define with stakeholder whether to throw an error here
+                         {
+                            return [2 /*return*/];
+                        } //TODO: define with stakeholder whether to throw an error here    
+                        if (this.currentLargestCluster != null) {
+                            this.currentLargestCluster.map(function (tileID) {
+                                var tile = _this.state.tilesTmpModel.get(tileID);
+                                tile.cluster = "";
+                                _this.rerenderTile(tileID);
+                            });
+                        }
+                        this.currentLargestCluster = largestCluster;
                         largestCluster.map(function (tileID) {
                             var tile = _this.state.tilesTmpModel.get(tileID);
                             tile.cluster = "largest ";
