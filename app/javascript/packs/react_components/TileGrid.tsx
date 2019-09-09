@@ -19,6 +19,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         this.pointerDownHandler = this.pointerDownHandler.bind(this);
         this.pointerCancelHandler = this.pointerCancelHandler.bind(this);
         this.pointerEnterHandler = this.pointerEnterHandler.bind(this);
+        this.successCallback = this.successCallback.bind(this);
 
         this.initTiles();
         this.initStyle();
@@ -64,7 +65,17 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
     private async successCallback(val: Response){
-        console.log(await val.json());
+        let largestCluster = await val.json() as string[];
+        
+        if(largestCluster == null) // casting error
+            return;
+        
+        for (const key in largestCluster) {
+            let tile = this.state.tilesTmpModel.get(key);
+            tile.cluster = "largest";
+        }
+
+        
     }
 
 

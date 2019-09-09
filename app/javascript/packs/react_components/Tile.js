@@ -37,8 +37,12 @@ var Tile = /** @class */ (function (_super) {
     };
     Tile.prototype.render = function () {
         console.log("render tile: " + this.props.id);
-        var style = { backgroundColor: this.data.active ? 'gray' : 'white' };
-        return (React.createElement("button", { style: style, onPointerDown: this.clickDownHandler, onPointerUp: this.clickUpHandler, onPointerCancel: this.clickUpHandler, onPointerEnter: this.pointerEnterHandler }, this.props.children));
+        var tileClass = "tile ";
+        if (this.data.active)
+            tileClass += "active ";
+        if (this.data.cluster)
+            tileClass += this.data.cluster; //set cluster as string so you could combine multiple cluster
+        return (React.createElement("button", { className: tileClass, onPointerDown: this.clickDownHandler, onPointerUp: this.clickUpHandler, onPointerCancel: this.clickUpHandler, onPointerEnter: this.pointerEnterHandler }, this.props.children));
     };
     return Tile;
 }(React.Component));

@@ -29,11 +29,18 @@ export default class Tile extends React.Component<ITileProps> {
 
     render() {       
         console.log(`render tile: ${this.props.id}`);
+        
+        let tileClass = "tile ";
 
-        const style = { backgroundColor: this.data.active ? 'gray' : 'white' };
+        if(this.data.active)
+            tileClass += "active ";
+
+        if(this.data.cluster)
+            tileClass += this.data.cluster; //set cluster as string so you could combine multiple cluster
+
 
         return(
-            <button style={style} 
+            <button className={tileClass} 
             onPointerDown={this.clickDownHandler} 
             onPointerUp={this.clickUpHandler}
             onPointerCancel={this.clickUpHandler}

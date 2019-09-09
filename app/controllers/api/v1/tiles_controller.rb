@@ -17,8 +17,6 @@ class Api::V1::TilesController < ApplicationController
       end
     }
 
-    logger.debug cluster_tile_hash
-
     render json: cluster_tile_hash.fetch(largest_cluster_id)
   end
 

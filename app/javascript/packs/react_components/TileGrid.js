@@ -95,6 +95,7 @@ var TileGrid = /** @class */ (function (_super) {
         _this.pointerDownHandler = _this.pointerDownHandler.bind(_this);
         _this.pointerCancelHandler = _this.pointerCancelHandler.bind(_this);
         _this.pointerEnterHandler = _this.pointerEnterHandler.bind(_this);
+        _this.successCallback = _this.successCallback.bind(_this);
         _this.initTiles();
         _this.initStyle();
         return _this;
@@ -135,14 +136,18 @@ var TileGrid = /** @class */ (function (_super) {
     };
     TileGrid.prototype.successCallback = function (val) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = console).log;
-                        return [4 /*yield*/, val.json()];
+            var largestCluster, key, tile;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, val.json()];
                     case 1:
-                        _b.apply(_a, [_c.sent()]);
+                        largestCluster = _a.sent();
+                        if (largestCluster == null) // casting error
+                            return [2 /*return*/];
+                        for (key in largestCluster) {
+                            tile = this.state.tilesTmpModel.get(key);
+                            tile.cluster = "largest";
+                        }
                         return [2 /*return*/];
                 }
             });
