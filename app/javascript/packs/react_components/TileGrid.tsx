@@ -25,7 +25,10 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         this.initStyle();
     }
 
-    public readonly state: IGridState = {tilesTmpModel:new Map<string, ITile>()};
+    public readonly state: IGridState = {
+        tilesTmpModel:new Map<string, ITile>(),
+        tileComponentRefs: new Map<string, React.Component>()
+    };
     private readonly style: React.CSSProperties = {display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%'};
     private fetchRequest: RequestInit = {method: 'post', body: null, headers: { 'Content-type': 'application/json' }};
 
@@ -48,19 +51,17 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
     private async submitTiles(){
-
-        var obb = {xCount:this.props.tileCountX, 
+        let obb = {xCount:this.props.tileCountX, 
             yCount:this.props.tileCountY, 
             tiles:[...this.state.tilesTmpModel]}; // ... spreads contents of Map; necessarry, stringify doesnt work with iterables
 
         this.fetchRequest.body = JSON.stringify(obb);
-        console.log(this.fetchRequest.body);
 
         try {
             fetch(this.props.findClusterAPIpath, this.fetchRequest)
             .then(this.successCallback)
         } catch (error) {
-            console.log(error);    
+            console.log(error);
         }
     }
 
@@ -68,16 +69,21 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         let largestCluster = await val.json() as string[];
         
         if(largestCluster == null) // casting error
-            return;
+            return; //TODO: define with stakeholder whether to throw an error here
         
-        for (const key in largestCluster) {
-            let tile = this.state.tilesTmpModel.get(key);
-            tile.cluster = "largest";
-        }
+        largestCluster.map(tileID => {
+            let tile = this.state.tilesTmpModel.get(tileID);
+            tile.cluster = "largest ";
+            this.rerenderTile(tileID);
+        });
 
         
     }
 
+    private rerenderTile(tileID:string){
+        let tc = this.state.tileComponentRefs.get(tileID);
+        tc.forceUpdate(); // rerender selected tile
+    }
 
     private isDragging:boolean = false;
 
@@ -90,6 +96,8 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         let t = this.state.tilesTmpModel.get(tileID);
         t.active = !t.active;
 
+        this.rerenderTile(tileID);
+
         if(!this.isDragging)
             this.isDragging = true;
     }
@@ -100,13 +108,9 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
     /* return true if isDragging */
-    private pointerEnterHandler(tileID:string):boolean {
+    private pointerEnterHandler(tileID:string) {
         if(this.isDragging){
             this.pointerDownHandler(tileID);
-            return true;
-        }
-        else{
-            return false;
         }
     }
 

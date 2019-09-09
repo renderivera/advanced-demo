@@ -18,31 +18,19 @@ var Tile = /** @class */ (function (_super) {
     __extends(Tile, _super);
     function Tile(props) {
         var _this = _super.call(this, props) || this;
-        _this.clickDownHandler = _this.clickDownHandler.bind(_this);
-        _this.clickUpHandler = _this.clickUpHandler.bind(_this);
-        _this.pointerEnterHandler = _this.pointerEnterHandler.bind(_this);
         _this.data = props.containerState.tilesTmpModel.get(props.id);
+        props.containerState.tileComponentRefs.set(_this.props.id, _this);
         return _this;
     }
-    Tile.prototype.clickDownHandler = function (event) {
-        this.props.pointerDownHandler(this.props.id);
-        this.forceUpdate();
-    };
-    Tile.prototype.clickUpHandler = function (event) {
-        this.props.pointerCancelHandler(this.props.id);
-    };
-    Tile.prototype.pointerEnterHandler = function (event) {
-        if (this.props.pointerEnterHandler(this.props.id))
-            this.forceUpdate();
-    };
     Tile.prototype.render = function () {
+        var _this = this;
         console.log("render tile: " + this.props.id);
         var tileClass = "tile ";
         if (this.data.active)
             tileClass += "active ";
         if (this.data.cluster)
             tileClass += this.data.cluster; //set cluster as string so you could combine multiple cluster
-        return (React.createElement("button", { className: tileClass, onPointerDown: this.clickDownHandler, onPointerUp: this.clickUpHandler, onPointerCancel: this.clickUpHandler, onPointerEnter: this.pointerEnterHandler }, this.props.children));
+        return (React.createElement("button", { className: tileClass, onPointerDown: function () { return _this.props.pointerDownHandler(_this.props.id); }, onPointerUp: function () { return _this.props.pointerCancelHandler(_this.props.id); }, onPointerCancel: function () { return _this.props.pointerCancelHandler(_this.props.id); }, onPointerEnter: function () { return _this.props.pointerEnterHandler(_this.props.id); } }, this.props.children));
     };
     return Tile;
 }(React.Component));

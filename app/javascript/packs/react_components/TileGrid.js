@@ -86,7 +86,10 @@ var TileGrid = /** @class */ (function (_super) {
     __extends(TileGrid, _super);
     function TileGrid(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = { tilesTmpModel: new Map() };
+        _this.state = {
+            tilesTmpModel: new Map(),
+            tileComponentRefs: new Map()
+        };
         _this.style = { display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%' };
         _this.fetchRequest = { method: 'post', body: null, headers: { 'Content-type': 'application/json' } };
         _this.isDragging = false;
@@ -122,7 +125,6 @@ var TileGrid = /** @class */ (function (_super) {
                     yCount: this.props.tileCountY,
                     tiles: __spread(this.state.tilesTmpModel) };
                 this.fetchRequest.body = JSON.stringify(obb);
-                console.log(this.fetchRequest.body);
                 try {
                     fetch(this.props.findClusterAPIpath, this.fetchRequest)
                         .then(this.successCallback);
@@ -136,22 +138,28 @@ var TileGrid = /** @class */ (function (_super) {
     };
     TileGrid.prototype.successCallback = function (val) {
         return __awaiter(this, void 0, void 0, function () {
-            var largestCluster, key, tile;
+            var largestCluster;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, val.json()];
                     case 1:
                         largestCluster = _a.sent();
                         if (largestCluster == null) // casting error
-                            return [2 /*return*/];
-                        for (key in largestCluster) {
-                            tile = this.state.tilesTmpModel.get(key);
-                            tile.cluster = "largest";
-                        }
+                            return [2 /*return*/]; //TODO: define with stakeholder whether to throw an error here
+                        largestCluster.map(function (tileID) {
+                            var tile = _this.state.tilesTmpModel.get(tileID);
+                            tile.cluster = "largest ";
+                            _this.rerenderTile(tileID);
+                        });
                         return [2 /*return*/];
                 }
             });
         });
+    };
+    TileGrid.prototype.rerenderTile = function (tileID) {
+        var tc = this.state.tileComponentRefs.get(tileID);
+        tc.forceUpdate(); // rerender selected tile
     };
     // handle when the user draws and goes outside the grid
     TileGrid.prototype.gridPointerLeaveHandler = function (event) {
@@ -160,6 +168,7 @@ var TileGrid = /** @class */ (function (_super) {
     TileGrid.prototype.pointerDownHandler = function (tileID) {
         var t = this.state.tilesTmpModel.get(tileID);
         t.active = !t.active;
+        this.rerenderTile(tileID);
         if (!this.isDragging)
             this.isDragging = true;
     };
@@ -171,10 +180,6 @@ var TileGrid = /** @class */ (function (_super) {
     TileGrid.prototype.pointerEnterHandler = function (tileID) {
         if (this.isDragging) {
             this.pointerDownHandler(tileID);
-            return true;
-        }
-        else {
-            return false;
         }
     };
     TileGrid.prototype.render = function () {
