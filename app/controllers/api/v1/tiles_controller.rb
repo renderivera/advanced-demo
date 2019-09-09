@@ -5,30 +5,32 @@ class Api::V1::TilesController < ApplicationController
 
   def largest
     logger.debug "NEW REQUEST"
-    tile_hash = get_hash_with_all_clusters()
+    tile_hash = get_clusters_tile_hash(profile_params[0], profile_params[1], profile_params[2].to_h)
 
-    tile_hash.
+    tile_hash.each_pair {|key, value|
+      logger.debug "#{value[:x]},#{value[:y]} - Cluster: #{value[:cluster_id]}"
+    }
 
     render json: resp_body
   end
 
   private
-  def get_hash_with_all_clusters
-    tile_hash = profile_params[2].to_h #converts params to hash 
-    x_count = profile_params[0]
-    y_count = profile_params[1]
-    
+  def get_clusters_tile_hash(x_count, y_count, tile_hash)
     stack = []
     cluster_id = 0;
+    tile_cluster_hash = Hash.new
+
+    logger.debug x_count
+    logger.debug y_count
 
     tile_hash.each_pair {|key, value|
-      stack.push(value)
-
-      #new cluster
-      cluster_id += 1
+      stack.push([key, value])
+      cluster_id += 1 #new cluster
 
       while !stack.empty?
-        val = stack.pop()
+        key_val = stack.pop()
+        ks = key_val[0]
+        val = key_val[1]
 
         if val[:visited]
           next
@@ -41,29 +43,34 @@ class Api::V1::TilesController < ApplicationController
         val[:visited] = true
 
         if val[:active] #look for neighbors if active
+          tile_cluster_hash[ks] = val;
+
           class << val # add cluster id to "link" the tiles
             attr_accessor :cluster_id
           end
           val[:cluster_id] = cluster_id;
-          logger.debug "#{val[:x]},#{val[:y]} - Cluster: #{val[:cluster_id]}"
 
           if val[:x] > 0
-            stack.push(tile_hash.fetch("#{val[:x] - 1},#{val[:y]}")) #left
+            k = "#{val[:x] - 1},#{val[:y]}"
+            stack.push([k, tile_hash.fetch(k)]) #left
           end
-          if val[:x] < x_count
-            stack.push(tile_hash.fetch("#{val[:x] + 1},#{val[:y]}")) #right
+          if val[:x] < x_count - 1 
+            k = "#{val[:x] + 1},#{val[:y]}"
+            stack.push([k, tile_hash.fetch(k)]) #right
           end
           if val[:y] > 0
-            stack.push(tile_hash.fetch("#{val[:x]},#{val[:y] - 1}")) #bottom /top
+            k = "#{val[:x]},#{val[:y] - 1}"
+            stack.push([k, tile_hash.fetch(k)]) #bottom /top
           end
-          if val[:y] < y_count
-            stack.push(tile_hash.fetch("#{val[:x]},#{val[:y] + 1}")) #top / bottom
+          if val[:y] < y_count - 1 
+            k = "#{val[:x]},#{val[:y] + 1}"
+            stack.push([k, tile_hash.fetch(k)]) #top / bottom
           end
         end
       end  
     }
 
-    return tile_hash
+    return tile_cluster_hash
   end
 
 
@@ -78,9 +85,6 @@ class Api::V1::TilesController < ApplicationController
   end
 
   def profile_params 
-    #params.require(:xCount)
-    #params.require(:yCount)
     params.require([:xCount, :yCount, :tiles])
-    
   end
 end
