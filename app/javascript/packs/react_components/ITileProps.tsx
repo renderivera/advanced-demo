@@ -1,7 +1,7 @@
 export interface ITile {
     x: number;
     y: number;
-    active: boolean;
+    active?: boolean;
     cluster?: ICluster;
 }
 

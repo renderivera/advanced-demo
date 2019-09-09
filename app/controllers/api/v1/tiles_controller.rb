@@ -5,23 +5,28 @@ class Api::V1::TilesController < ApplicationController
 
   def largest
     logger.debug "NEW REQUEST"
-    tile_hash = get_clusters_tile_hash(profile_params[0], profile_params[1], profile_params[2].to_h)
+    cluster_tile_hash = get_clusters_tile_hash(profile_params[0], profile_params[1], profile_params[2].to_h)
 
-    tile_hash.each_pair {|key, value|
-      logger.debug "#{value[:x]},#{value[:y]} - Cluster: #{value[:cluster_id]}"
+    largest_cluster_id = ""
+    largest_count = 0;
+
+    cluster_tile_hash.each_pair {|key, value|
+      if value.length > largest_count
+        largest_count = value.length
+        largest_cluster_id = key
+      end
     }
 
-    render json: resp_body
+    logger.debug cluster_tile_hash
+
+    render json: cluster_tile_hash.fetch(largest_cluster_id)
   end
 
   private
   def get_clusters_tile_hash(x_count, y_count, tile_hash)
     stack = []
     cluster_id = 0;
-    tile_cluster_hash = Hash.new
-
-    logger.debug x_count
-    logger.debug y_count
+    tile_cluster_hash = Hash.new #{[]} #empty array as default value
 
     tile_hash.each_pair {|key, value|
       stack.push([key, value])
@@ -43,7 +48,10 @@ class Api::V1::TilesController < ApplicationController
         val[:visited] = true
 
         if val[:active] #look for neighbors if active
-          tile_cluster_hash[ks] = val;
+          if(!tile_cluster_hash["#{cluster_id}"])
+            tile_cluster_hash["#{cluster_id}"] = Array.new
+          end
+          tile_cluster_hash["#{cluster_id}"].push(ks)
 
           class << val # add cluster id to "link" the tiles
             attr_accessor :cluster_id
@@ -73,17 +81,7 @@ class Api::V1::TilesController < ApplicationController
     return tile_cluster_hash
   end
 
-
   private
-  def find_cluster
-    10
-  end
-  def resp_body 
-    {
-      cluster: find_cluster
-    }
-  end
-
   def profile_params 
     params.require([:xCount, :yCount, :tiles])
   end

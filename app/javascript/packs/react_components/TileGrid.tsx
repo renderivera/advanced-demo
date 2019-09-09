@@ -33,7 +33,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     private initTiles() {
         for (let y = 0; y < this.props.tileCountY; y++) {            
             for (let x = 0; x < this.props.tileCountX; x++) {
-                this.state.tilesTmpModel.set(`${x},${y}`, {x: x, y: y, active: false})
+                this.state.tilesTmpModel.set(`${x},${y}`, {x: x, y: y})
             }            
         }
     }
