@@ -17,7 +17,11 @@ class Api::V1::TilesController < ApplicationController
       end
     }
 
-    render json: cluster_tile_hash.fetch(largest_cluster_id)
+    if(largest_cluster_id != "")
+      render json: cluster_tile_hash.fetch(largest_cluster_id)
+    else
+      render json: []
+    end
   end
 
   private
