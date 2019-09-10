@@ -92,7 +92,7 @@ var TileGrid = /** @class */ (function (_super) {
         };
         _this.style = { display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%' };
         _this.fetchRequest = { method: 'post', body: null, headers: { 'Content-type': 'application/json' } };
-        _this.currentLargestCluster = null; // TODO: rerender previously largest  tiles
+        _this.currentLargestCluster = null;
         _this.isDragging = false;
         _this.submitTiles = _this.submitTiles.bind(_this);
         _this.gridPointerLeaveHandler = _this.gridPointerLeaveHandler.bind(_this);
@@ -147,17 +147,8 @@ var TileGrid = /** @class */ (function (_super) {
                     case 1:
                         largestCluster = _a.sent();
                         if (largestCluster == null) // casting error
-                         {
-                            return [2 /*return*/];
-                        } //TODO: define with stakeholder whether to throw an error here    
-                        if (this.currentLargestCluster != null) {
-                            this.currentLargestCluster.map(function (tileID) {
-                                var tile = _this.state.tilesTmpModel.get(tileID);
-                                tile.cluster = "";
-                                _this.rerenderTile(tileID);
-                            });
-                        }
-                        this.currentLargestCluster = largestCluster;
+                            return [2 /*return*/]; //TODO: define with stakeholder whether to throw an error here    
+                        this.resetCurrentLargestCluster(largestCluster);
                         largestCluster.map(function (tileID) {
                             var tile = _this.state.tilesTmpModel.get(tileID);
                             tile.cluster = "largest ";
@@ -168,17 +159,28 @@ var TileGrid = /** @class */ (function (_super) {
             });
         });
     };
+    TileGrid.prototype.resetCurrentLargestCluster = function (largestCluster) {
+        var _this = this;
+        if (this.currentLargestCluster != null) {
+            this.currentLargestCluster.map(function (tileID) {
+                var tile = _this.state.tilesTmpModel.get(tileID);
+                tile.cluster = "";
+                _this.rerenderTile(tileID);
+            });
+        }
+        this.currentLargestCluster = largestCluster; //set to null if no largestCluster parameter provided
+    };
     TileGrid.prototype.rerenderTile = function (tileID) {
         var tc = this.state.tileComponentRefs.get(tileID);
         tc.forceUpdate(); // rerender selected tile
     };
-    // handle when the user draws and goes outside the grid
     TileGrid.prototype.gridPointerLeaveHandler = function (event) {
-        this.pointerCancelHandler();
+        //this.pointerCancelHandler();     // handle when the user draws and goes outside the grid
     };
     TileGrid.prototype.pointerDownHandler = function (tileID) {
         var t = this.state.tilesTmpModel.get(tileID);
         t.active = !t.active;
+        this.resetCurrentLargestCluster();
         this.rerenderTile(tileID);
         if (!this.isDragging)
             this.isDragging = true;
@@ -187,7 +189,6 @@ var TileGrid = /** @class */ (function (_super) {
         if (this.isDragging)
             this.isDragging = false;
     };
-    /* return true if isDragging */
     TileGrid.prototype.pointerEnterHandler = function (tileID) {
         if (this.isDragging) {
             this.pointerDownHandler(tileID);
@@ -200,8 +201,7 @@ var TileGrid = /** @class */ (function (_super) {
         try {
             for (var _b = __values(this.state.tilesTmpModel.keys()), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var key = _c.value;
-                tiles.push(React.createElement(Tile_1.default, { key: key, id: key, containerState: this.state, pointerDownHandler: this.pointerDownHandler, pointerCancelHandler: this.pointerCancelHandler, pointerEnterHandler: this.pointerEnterHandler },
-                    React.createElement("p", null, key)));
+                tiles.push(React.createElement(Tile_1.default, { key: key, id: key, containerState: this.state, pointerDownHandler: this.pointerDownHandler, pointerCancelHandler: this.pointerCancelHandler, pointerEnterHandler: this.pointerEnterHandler }));
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -211,9 +211,10 @@ var TileGrid = /** @class */ (function (_super) {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        return (React.createElement("div", { style: this.style, onPointerLeave: this.gridPointerLeaveHandler },
-            tiles,
-            React.createElement("button", { onClick: this.submitTiles })));
+        return (React.createElement(React.Fragment, null,
+            React.createElement("button", { className: "submitButton", onClick: this.submitTiles },
+                React.createElement("p", null, "Find Largest Cluster")),
+            React.createElement("div", { className: "tileGrid", style: this.style, onPointerLeave: this.gridPointerLeaveHandler }, tiles)));
     };
     return TileGrid;
 }(React.Component));

@@ -32,8 +32,6 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     private readonly style: React.CSSProperties = {display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%'};
     private fetchRequest: RequestInit = {method: 'post', body: null, headers: { 'Content-type': 'application/json' }};
 
-    
-
     private initTiles() {
         for (let y = 0; y < this.props.tileCountY; y++) {            
             for (let x = 0; x < this.props.tileCountX; x++) {
@@ -65,22 +63,13 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         }
     }
 
-    private currentLargestCluster:string[] = null; // TODO: rerender previously largest  tiles
-
     private async largestClusterAPIcallback(val: Response){
         let largestCluster = await val.json() as string[];
 
         if(largestCluster == null) // casting error
-        {return;}     //TODO: define with stakeholder whether to throw an error here    
+            return;     //TODO: define with stakeholder whether to throw an error here    
         
-        if(this.currentLargestCluster != null){
-            this.currentLargestCluster.map(tileID => {
-                let tile = this.state.tilesTmpModel.get(tileID);
-                tile.cluster = "";
-                this.rerenderTile(tileID);
-            });
-        }
-        this.currentLargestCluster = largestCluster;
+        this.resetCurrentLargestCluster(largestCluster)
         
         largestCluster.map(tileID => {
             let tile = this.state.tilesTmpModel.get(tileID);
@@ -89,7 +78,18 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         });   
     }
 
-     
+    private currentLargestCluster:string[] = null;
+    
+    private resetCurrentLargestCluster(largestCluster?:string[]){
+        if(this.currentLargestCluster != null){
+            this.currentLargestCluster.map(tileID => {
+                let tile = this.state.tilesTmpModel.get(tileID);
+                tile.cluster = "";
+                this.rerenderTile(tileID);
+            });
+        }
+        this.currentLargestCluster = largestCluster; //set to null if no largestCluster parameter provided
+    } 
 
     private rerenderTile(tileID:string){
         let tc = this.state.tileComponentRefs.get(tileID);
@@ -97,16 +97,15 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     }
 
     private isDragging:boolean = false;
-
-    // handle when the user draws and goes outside the grid
     private gridPointerLeaveHandler(event:React.PointerEvent<HTMLDivElement>) {
-        this.pointerCancelHandler();
+        this.pointerCancelHandler();     // handle when the user drags outside the grid
     }
 
     private pointerDownHandler(tileID:string) {
         let t = this.state.tilesTmpModel.get(tileID);
         t.active = !t.active;
-
+        
+        this.resetCurrentLargestCluster();
         this.rerenderTile(tileID);
 
         if(!this.isDragging)
@@ -118,7 +117,6 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
             this.isDragging = false;
     }
 
-    /* return true if isDragging */
     private pointerEnterHandler(tileID:string) {
         if(this.isDragging){
             this.pointerDownHandler(tileID);
@@ -135,16 +133,19 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
             pointerDownHandler={this.pointerDownHandler}
             pointerCancelHandler={this.pointerCancelHandler}
             pointerEnterHandler={this.pointerEnterHandler}>
-                <p>{key}</p>
             </Tile>
            );
         }
 
         return(
-            <div style={this.style} onPointerLeave={this.gridPointerLeaveHandler}>
-                {tiles}
-                <button onClick={this.submitTiles}></button>
-            </div>
+            <React.Fragment>
+                <button className="submitButton" onClick={this.submitTiles}>
+                    <p>Find Largest Cluster</p>
+                </button>
+                <div className="tileGrid" style={this.style} onPointerLeave={this.gridPointerLeaveHandler}>
+                    {tiles}
+                </div>
+            </React.Fragment>
         );
     }
 }

@@ -2,14 +2,41 @@
 <header>
 <style>
 .tile {
-    background:white;
+    background-color: #F3F3F3;
+    transition: background-color 0.25s ease;
+    border: 1px solid gray;
+    outline: none;
 }
 .tile.active {
-    background:gray;
+    background-color: #0a2437;
 }
 
-.tile.largest {
-    background:red;
+.tile.active.largest {
+    background-color: #07ded2;
+}
+
+#TileGrid {
+    width: 98vw;
+    height: 75vh;
+}
+
+.submitButton {
+    transition: transform 0.25s ease;
+    transition: color 0.05s ease-out;
+    width: 25vw;
+    margin: 10px;
+    background-color: #07ded2;
+    border: 0;
+    outline: none;
+}
+
+.submitButton:hover {
+    transform: translateY(-1px);
+}
+
+.submitButton:active {
+    color: #fff;
+    transform: translateY(2px);
 }
 
 
@@ -17,7 +44,14 @@
 
 </header>
 <body>
-    <div id="TileGrid" style="height:75%; width:75%">
+    <h1>Draw Something - Rails API & React Demo</h1>
+    <p>
+        This demo showcases the use of a Rails Backend with a React Frontend.
+        When you draw something, this happens on client side. 
+        Once you hit the button "find largest cluster" the tiles are sent to the backend rails API. 
+        There graph traversal is performed to identify the various clusters, and then the largest cluster is returned to the frontend/client.
+    </p>
+    <div id="TileGrid">
 </body>
     <%=javascript_pack_tag 'app'%>
 </html>
