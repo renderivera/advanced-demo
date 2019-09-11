@@ -201,7 +201,8 @@ var TileGrid = /** @class */ (function (_super) {
         try {
             for (var _b = __values(this.state.tilesTmpModel.keys()), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var key = _c.value;
-                tiles.push(React.createElement(Tile_1.default, { key: key, id: key, containerState: this.state, pointerDownHandler: this.pointerDownHandler, pointerCancelHandler: this.pointerCancelHandler, pointerEnterHandler: this.pointerEnterHandler }));
+                tiles.push(React.createElement(Tile_1.default, { key: key, id: key, containerState: this.state, pointerDownHandler: this.pointerDownHandler, pointerCancelHandler: this.pointerCancelHandler, pointerEnterHandler: this.pointerEnterHandler },
+                    React.createElement("p", { className: "tileText" }, key)));
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }

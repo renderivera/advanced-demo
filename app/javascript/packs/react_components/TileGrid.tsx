@@ -133,6 +133,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
             pointerDownHandler={this.pointerDownHandler}
             pointerCancelHandler={this.pointerCancelHandler}
             pointerEnterHandler={this.pointerEnterHandler}>
+                <p className="tileText">{key}</p>
             </Tile>
            );
         }

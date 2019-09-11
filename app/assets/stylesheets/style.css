@@ -1,9 +1,22 @@
-.tile {
+body {
     background-color: #F3F3F3;
+}
+
+.tile {
+    background-color: white;
     transition: background-color 0.25s ease;
-    border: 1px solid gray;
+    border: 0;
+    margin: 1px;
+    border-radius: 10%;
     outline: none;
 }
+.tileText{
+    color:white;
+    font-size: 6pt;
+    margin:0;
+    padding:0;
+}
+
 .tile.active {
     background-color: #0a2437;
 }
@@ -19,7 +32,6 @@
 
 .submitButton {
     transition: transform 0.25s ease;
-    transition: color 0.05s ease-out;
     width: 25vw;
     margin: 10px;
     background-color: #07ded2;
@@ -49,8 +61,4 @@ h1 {
 h2 {
     margin-top:5px;
     font-size: 20pt;
-}
-
-body {
-    background-color: #f8f9fb;
 }
