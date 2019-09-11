@@ -2,10 +2,9 @@ class Api::V1::TilesController < ApplicationController
   wrap_parameters false
   logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
 
-
   def largest
     logger.debug "NEW REQUEST"
-    cluster_tile_hash = get_clusters_tile_hash(profile_params[0], profile_params[1], profile_params[2].to_h)
+    cluster_tile_hash = get_clusters_tile_hash(profile_params[0].to_i, profile_params[1].to_i, profile_params[2].to_h)
 
     largest_cluster_id = ""
     largest_count = 0;
@@ -82,9 +81,22 @@ class Api::V1::TilesController < ApplicationController
 
     return tile_cluster_hash
   end
-
+  
   private
   def profile_params 
     params.require([:xCount, :yCount, :tiles])
+  end
+
+  #change Rails Error handling to return a Bad Request error
+  rescue_from ActionController::ParameterMissing do |exception|
+    bad_request_occurred(exception)
+  end
+  rescue_from ::KeyError do |exception|
+    bad_request_occurred(exception)
+  end
+
+  private
+  def bad_request_occurred(exception)
+    render json: {error: exception.message}.to_json, status: :bad_request
   end
 end
