@@ -1,0 +1,56 @@
+.tile {
+    background-color: #F3F3F3;
+    transition: background-color 0.25s ease;
+    border: 1px solid gray;
+    outline: none;
+}
+.tile.active {
+    background-color: #0a2437;
+}
+
+.tile.active.largest {
+    background-color: #07ded2;
+}
+
+#TileGrid {
+    width: 98vw;
+    height: 75vh;
+}
+
+.submitButton {
+    transition: transform 0.25s ease;
+    transition: color 0.05s ease-out;
+    width: 25vw;
+    margin: 10px;
+    background-color: #07ded2;
+    border: 0;
+    outline: none;
+}
+
+.submitButton:hover {
+    transform: translateY(-1px);
+}
+
+.submitButton:active {
+    color: #fff;
+    transform: translateY(2px);
+}
+
+h1, h2, p {
+    font-family: Din, sans-serif;
+    color: #0a2437;
+}
+
+h1 {
+    font-size: 40pt;
+    margin-bottom:0;
+}
+
+h2 {
+    margin-top:5px;
+    font-size: 20pt;
+}
+
+body {
+    background-color: #f8f9fb;
+}

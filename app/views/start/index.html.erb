@@ -1,57 +1,16 @@
 <html>
 <header>
-<style>
-.tile {
-    background-color: #F3F3F3;
-    transition: background-color 0.25s ease;
-    border: 1px solid gray;
-    outline: none;
-}
-.tile.active {
-    background-color: #0a2437;
-}
-
-.tile.active.largest {
-    background-color: #07ded2;
-}
-
-#TileGrid {
-    width: 98vw;
-    height: 75vh;
-}
-
-.submitButton {
-    transition: transform 0.25s ease;
-    transition: color 0.05s ease-out;
-    width: 25vw;
-    margin: 10px;
-    background-color: #07ded2;
-    border: 0;
-    outline: none;
-}
-
-.submitButton:hover {
-    transform: translateY(-1px);
-}
-
-.submitButton:active {
-    color: #fff;
-    transform: translateY(2px);
-}
-
-
-</style>
-
+    <link href="style.css" rel="stylesheet" type="text/css">
 </header>
 <body>
-    <h1>Draw Something - Rails API & React Demo</h1>
+    <h1>Draw Something</h1>
+    <h2>A Rails API Backend with React Frontend</h2>
     <p>
-        This demo showcases the use of a Rails Backend with a React Frontend.
-        When you draw something, this happens on client side. 
-        Once you hit the button "find largest cluster" the tiles are sent to the backend rails API. 
-        There graph traversal is performed to identify the various clusters, and then the largest cluster is returned to the frontend/client.
+        When you activate the tiles this is processed on Client side in the view. 
+        Once you hit the button "find largest cluster" the tiles are sent via POST request to the backend Rails API controller. 
+        The backend performs graph traversal to identify all clusters. The largest cluster is then returned to the frontend/client. Have a look at the console log for more information on the rendering update cycles.
     </p>
     <div id="TileGrid">
 </body>
-    <%=javascript_pack_tag 'app'%>
+<%=javascript_pack_tag 'app'%>
 </html>
