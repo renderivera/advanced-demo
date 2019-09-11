@@ -31,20 +31,25 @@ body {
 }
 
 .submitButton {
-    transition: transform 0.25s ease;
+    transition: transform 0.1s ease;
+    transition: background-color 0.25s ease;
+    transition: color 0.25s ease;
     width: 25vw;
     margin: 10px;
     background-color: #07ded2;
     border: 0;
     outline: none;
+    text-transform: uppercase;
+    font-weight: bold;
 }
-
 .submitButton:hover {
-    transform: translateY(-1px);
+    background-color: #0a2437;
+}
+.submitButton:hover p {
+    color: #F3F3F3;
 }
 
 .submitButton:active {
-    color: #fff;
     transform: translateY(2px);
 }
 

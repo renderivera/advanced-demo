@@ -43,7 +43,14 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         this.style.gridTemplateColumns = colTemplate;
     }
 
+    private isLoading = false;
+
     private async submitTiles(){
+        if(this.isLoading)
+        return;
+
+        this.isLoading = true;
+
         let obb = {xCount:this.props.tileCountX, 
             yCount:this.props.tileCountY, 
             tiles:[...this.state.tilesTmpModel]}; // ... spreads contents of Map; necessarry, stringify doesnt work with iterables
@@ -55,6 +62,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
             .then(this.largestClusterAPIcallback)
         } catch (error) {
             console.log(error);
+            this.isLoading = false;
         }
     }
 
@@ -71,6 +79,8 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
             tile.cluster = "largest ";
             this.rerenderTile(tileID);
         });   
+
+        this.isLoading = false;
     }
 
     private currentLargestCluster:string[] = null;

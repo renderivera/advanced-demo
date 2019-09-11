@@ -92,6 +92,7 @@ var TileGrid = /** @class */ (function (_super) {
         };
         _this.style = { display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%' };
         _this.fetchRequest = { method: 'post', body: null, headers: { 'Content-type': 'application/json' } };
+        _this.isLoading = false;
         _this.currentLargestCluster = null;
         _this.isDragging = false;
         _this.submitTiles = _this.submitTiles.bind(_this);
@@ -122,6 +123,9 @@ var TileGrid = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var obb;
             return __generator(this, function (_a) {
+                if (this.isLoading)
+                    return [2 /*return*/];
+                this.isLoading = true;
                 obb = { xCount: this.props.tileCountX,
                     yCount: this.props.tileCountY,
                     tiles: __spread(this.state.tilesTmpModel) };
@@ -132,6 +136,7 @@ var TileGrid = /** @class */ (function (_super) {
                 }
                 catch (error) {
                     console.log(error);
+                    this.isLoading = false;
                 }
                 return [2 /*return*/];
             });
@@ -154,6 +159,7 @@ var TileGrid = /** @class */ (function (_super) {
                             tile.cluster = "largest ";
                             _this.rerenderTile(tileID);
                         });
+                        this.isLoading = false;
                         return [2 /*return*/];
                 }
             });
