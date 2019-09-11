@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {ITileProps, ITile} from './ITileProps';
+import ITileProps from './interfaces/ITileProps';
+import ITile from './interfaces/ITile';
 
 export default class Tile extends React.Component<ITileProps> {
     constructor(props:ITileProps){

@@ -1,13 +1,8 @@
 import * as React from 'react';
 import Tile from './Tile';
-import {ITile, IGridState} from './ITileProps';
-
-
-interface IGridProps{
-    tileCountX:number;
-    tileCountY:number;
-    findClusterAPIpath:string;
-}
+import IGridProps from './interfaces/IGridProps';
+import IGridState from './interfaces/IGridState';
+import ITile from './interfaces/ITile';
 
 export default class TileGrid extends React.Component<IGridProps,IGridState>{
 
@@ -21,8 +16,8 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         this.pointerEnterHandler = this.pointerEnterHandler.bind(this);
         this.largestClusterAPIcallback = this.largestClusterAPIcallback.bind(this);
 
-        this.initTiles();
-        this.initStyle();
+        this.initTilesTmpModel();
+        this.initGridMatrixLayout();
     }
 
     public readonly state: IGridState = {
@@ -32,7 +27,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
     private readonly style: React.CSSProperties = {display: 'grid', gridTemplateColumns: null, width: '100%', height: '100%'};
     private fetchRequest: RequestInit = {method: 'post', body: null, headers: { 'Content-type': 'application/json' }};
 
-    private initTiles() {
+    private initTilesTmpModel() {
         for (let y = 0; y < this.props.tileCountY; y++) {            
             for (let x = 0; x < this.props.tileCountX; x++) {
                 this.state.tilesTmpModel.set(`${x},${y}`, {x: x, y: y})
@@ -40,7 +35,7 @@ export default class TileGrid extends React.Component<IGridProps,IGridState>{
         }
     }
 
-    private initStyle() {
+    private initGridMatrixLayout() {
         let colTemplate = '';
         for (let index = 0; index < this.props.tileCountX; index++) {
             colTemplate += 'auto '; // add an auto for each x-int / column for dynamic resizing

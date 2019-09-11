@@ -100,18 +100,18 @@ var TileGrid = /** @class */ (function (_super) {
         _this.pointerCancelHandler = _this.pointerCancelHandler.bind(_this);
         _this.pointerEnterHandler = _this.pointerEnterHandler.bind(_this);
         _this.largestClusterAPIcallback = _this.largestClusterAPIcallback.bind(_this);
-        _this.initTiles();
-        _this.initStyle();
+        _this.initTilesTmpModel();
+        _this.initGridMatrixLayout();
         return _this;
     }
-    TileGrid.prototype.initTiles = function () {
+    TileGrid.prototype.initTilesTmpModel = function () {
         for (var y = 0; y < this.props.tileCountY; y++) {
             for (var x = 0; x < this.props.tileCountX; x++) {
                 this.state.tilesTmpModel.set(x + "," + y, { x: x, y: y });
             }
         }
     };
-    TileGrid.prototype.initStyle = function () {
+    TileGrid.prototype.initGridMatrixLayout = function () {
         var colTemplate = '';
         for (var index = 0; index < this.props.tileCountX; index++) {
             colTemplate += 'auto '; // add an auto for each x-int / column for dynamic resizing
