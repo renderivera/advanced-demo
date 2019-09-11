@@ -175,7 +175,7 @@ var TileGrid = /** @class */ (function (_super) {
         tc.forceUpdate(); // rerender selected tile
     };
     TileGrid.prototype.gridPointerLeaveHandler = function (event) {
-        //this.pointerCancelHandler();     // handle when the user draws and goes outside the grid
+        this.pointerCancelHandler(); // handle when the user drags outside the grid
     };
     TileGrid.prototype.pointerDownHandler = function (tileID) {
         var t = this.state.tilesTmpModel.get(tileID);
